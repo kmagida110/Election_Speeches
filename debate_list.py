@@ -1,8 +1,11 @@
 
 DEBATE_URL = 'http://www.presidency.ucsb.edu/debates.php'
 last_fetched_at = None
+import json
 import urllib.request, time, re, random, hashlib
 import bs4
+import time
+
 
 
 def fetch(url):
@@ -37,36 +40,69 @@ def fetch(url):
         result = str(response.read())
         with open(filename, 'w') as f:
             f.write(result)
+    
         return result
 
-
-
-
-
-
-
-if __name__ == '__main__':
-    debates_html = fetch(DEBATE_URL)
-    soup = bs4.BeautifulSoup(debates_html,'lxml')
+def debate_processing(soup):
+    return_list = []
     tables = soup.find_all('table')
+    
     for table in tables:
         if table['width'] == '700' and table['bgcolor'] == "#FFFFFF":
-            print('table found')
             actual_table = table
     rows = actual_table.find_all('tr')
-    print(rows[10])
     for row in rows:
         cols = row.find_all('td')
         cols = [ele.text.strip() for ele in cols]
         try:
             link = row.find('a')['href']
-            print(link)
-            
-        except:
-            link = False
-
-        if link:
             cols.append(link)
-        print(cols)
+            return_list.append(cols)
+        except:
+            pass
+
+    return return_list
+
+def get_words_from_speech(link):
+    result = fetch(link)
+    soup = bs4.BeautifulSoup(result,'lxml')
+    return soup
+
+
+
+
+if __name__ == '__main__':
+    result = fetch(DEBATE_URL)
+    soup = bs4.BeautifulSoup(result,'lxml')
+    debate_list = debate_processing(soup)
+    final_list = {}
+    for debate in debate_list:
+
+        if ' ' not in debate[0]:
+            debate = debate[1:]
+        debate_id = ' '.join(debate[:2])
+        try:
+            debate_datetime = time.strptime(debate[0].replace('th','').replace('st',''),'%B %d, %Y')
+        except:
+            debate_datetime = None
+
+        final_list[debate_id] = {}
+        final_list[debate_id]['link'] = debate[2]
+        final_list[debate_id]['time'] = debate_datetime 
+        
+        try:
+            final_list[debate_id]['soup'] = get_words_from_speech(debate[2])
+        except:
+            final_list[debate_id]['soup'] = None
+
+
+    # with open('data.txt', 'w') as outfile:
+    #     json.dumps(final_list, outfile)
+
+
+
+
+            
+
 
 
