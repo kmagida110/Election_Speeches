@@ -85,22 +85,32 @@ def find_politician_names(debate_soup_dict):
         raw = raw.replace("!", "! ")
         raw = raw.replace("  ", " ")
         raw = raw.replace("[applause]", "")
+        raw = raw.replace("[crosstalk]", "")
+        raw = raw.replace("[laughter]" "[Laughter]" "(LAUGHTER)", "")
         tokens = nltk.word_tokenize(raw)
         speech = nltk.Text(tokens)
         sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
         sents = sent_detector.tokenize(raw.strip())
 
         #find candidate names, most commonly repeated first words of sentences, not common words
-        first_words = []
+        colon_names = []
         dumbWords = stopwords.words('english')
 
         for sent in sents:
-            if nltk.word_tokenize(sent)[0].lower() not in dumbWords:
-                first_words.append(nltk.word_tokenize(sent)[0])
+            if ':' in sent:
+                sent = sent.split(':')
+                possible_name = sent[0]
+                if (len(possible_name)<25):
+                    colon_names.append(possible_name)
 
 
-        fdist1 = FreqDist(first_words)
-        print(fdist1.most_common(10))
+        fdist1 = FreqDist(colon_names)
+        fdist2 = FreqDist(sents)
+        mostFreq = fdist1.most_common(1)[0][1]
+        if mostFreq > 20 :
+            debate_soup_dict[debate]['names'] = fdist1.most_common(10)
+        else:
+            debate_soup_dict[debate]['names'] = fdist2.most_common(10)
 
 
 
