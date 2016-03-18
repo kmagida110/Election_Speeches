@@ -1,0 +1,27 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf340
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Christine Cook, Kyle Magda\
+Analyzing Political Candidate Speech Patterns\
+\
+Abstract: \
+In this project, we used transcripts from the last forty years of presidential and vice-presidential debates to generate a measure of similarity in candidates\'92 speech patterns. We pulled the transcripts from the University of California Santa Barbara\'92s Presidency Project site and used regular expressions to build a catalogue of speech by candidate. With this information, we created features to describe language patterns, and used cosine distance to determine the similarity between each candidate. The result is a program that can accept one candidate\'92s name and return the ten most similar candidates, or accept two names and compare them based on the features we built.\
+\
+Introduction and Significance:\
+Political rhetoric can be powerful and, at the same time, very subtle. With this project, we hope to reveal something about the nature of a candidate by comparing them without consideration of year, party, or gender. There are many similar projects out there. In fact, during the quarter, fivethirtyeight came out with something extremely similar where they returned the top grams sorted by TFIDF for the 2016 Republican candidates. Our project differs from most because we\'92re using data from all candidates that participate in a debate back to the 1970\'92s. We also use more features than just a bag of words similarity. Our project has a wider scope and a more ambitious approach to determine speech similarities.\
+We\'92ve had fun with the project, and have been able to learn a little more about our current political candidates during our testing process. We\'92re hoping people will find this work as revealing as we have.\
+\
+Our Solution:\
+First, we found all the debate transcripts online at the UCSB\'92s Presidency Project site. We used UrlLib and BeautifulSoup to pull the links to the debates, follow the links, and add the text to a dictionary in python. We also stored the name of the debate and the date/time for later reference. Next we extracted the names of the participants in each debate, including moderators, and added this information to the same debate dictionary.\
+The next step was to attribute text from each debate to the participants in each election cycle. This meant looping through the text of every debate and attributing each sentence to a candidate.\
+With this information, we generated features meant to describe each candidates\'92 speech. These include lists of words and bigrams, average word length, and lexicographical diversity, all with and without \'93stop words\'94. These features can be thought of as a candidate\'92s \'93profile\'94.\
+With these profiles, we sought to determine a distance between each candidate. This was a challenge due to the diversity in data types. To determine distance between the bags of words, we used TFIDF and normalization. For the numeric features, we normalized the raw distance between all candidates. We thought of this process as a sort of weighted K-nearest-neighbor, with atypical and heterogeneous data types.\
+We created clusters using this data across time and party affiliation to make observations about the importance of time vs. party affiliation and found that time has a stronger effect than party in our model. We also created the interface described above where a user can input one or two names and receive information on similar candidates.\
+\
+\
+\
+\
+}
